@@ -1,6 +1,25 @@
 // Code goes here!
 console.log('Running App.js...');
 
+// autobind decorator
+function Autobind(
+  _: any,
+  _2: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      const boundFunction = originalMethod.bind(this);
+      return boundFunction;
+    }
+  };
+  return adjDescriptor;
+}
+
+
+// ProjectInput Class
 class ProjectInput {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
@@ -26,13 +45,14 @@ class ProjectInput {
     this.attach();
   }
 
+  @Autobind
   private submitHandler(e: Event) {
     e.preventDefault();
     console.log(this.titleInputElement.value, this.descriptionInputElement.value, this.peopleInputElement.value);
   }
 
   private configure() {
-    this.element.addEventListener('submit', this.submitHandler.bind(this));
+    this.element.addEventListener('submit', this.submitHandler);
   }
 
   private attach() {
